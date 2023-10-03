@@ -1,0 +1,26 @@
+- name: Setup users and groups
+  hosts:
+    - cn1
+    - cn2
+    - mds 
+  become: true
+
+  tasks: 
+    - name: Copy/sync the /etc/passwd with owner and permissions
+      ansible.builtin.copy:
+        src: files/authentication/passwd
+        dest: /etc/toconcatpasswd
+        owner: root
+        group: root
+        mode: '0644'
+    - name: Copy/sync the /etc/group with owner and permissions
+      ansible.builtin.copy:
+        src: files/authentication/group
+        dest: /etc/toconcatgroup
+        owner: root
+        group: root
+        mode: '0644'
+    - name: Concatenate to the /etc/passwd if the info does not exist
+      ansible.builtin.shell: for i in $(cat /etc/toconcatpasswd); do grep -qF -- "$i" /etc/passwd || echo "$i" >> /etc/passwd; done
+    - name: Concatenate to the /etc/group if the info does not exist
+      ansible.builtin.shell: for i in $(cat /etc/toconcatgroup); do grep -qF -- "$i" /etc/group || echo "$i" >> /etc/group; done

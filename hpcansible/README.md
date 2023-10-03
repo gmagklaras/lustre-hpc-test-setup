@@ -56,37 +56,36 @@ git clone https://github.com/gmagklaras/lustre-hpc-test-setup.git
     },
     "changed": false,
     "ping": "pong"
-}
-oss2 | SUCCESS => {
+  }
+  oss2 | SUCCESS => {
     "ansible_facts": {
         "discovered_interpreter_python": "/usr/libexec/platform-python"
     },
     "changed": false,
     "ping": "pong"
-}
-mds | SUCCESS => {
+  }
+  mds | SUCCESS => {
     "ansible_facts": {
         "discovered_interpreter_python": "/usr/libexec/platform-python"
     },
     "changed": false,
     "ping": "pong"
-}
-cn1 | SUCCESS => {
+  }
+  cn1 | SUCCESS => {
     "ansible_facts": {
         "discovered_interpreter_python": "/usr/libexec/platform-python"
     },
     "changed": false,
     "ping": "pong"
-}
-cn2 | SUCCESS => {
+  }
+  cn2 | SUCCESS => {
     "ansible_facts": {
         "discovered_interpreter_python": "/usr/libexec/platform-python"
     },
     "changed": false,
     "ping": "pong"
-}
-
-   ```
+  }
+  ```
 
 
 

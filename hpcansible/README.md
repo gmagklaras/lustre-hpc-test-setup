@@ -87,6 +87,46 @@ git clone https://github.com/gmagklaras/lustre-hpc-test-setup.git
   }
   ```
 
+You can try now to setup authentication across the compute nodes and the MDS by running the setauthentication.yml playbook:
+```
+(hpcansible) [georgios@cn1 hpcansible]$ ansible-playbook -i inventory/ setauthentication.yml -l cn1,cn2,mds --diff
+```
+
+If all goes well, you should see output like the one below:
+```
+PLAY [Setup users and groups] *************************************************************************************
+
+TASK [Gathering Facts] ********************************************************************************************
+ok: [mds]
+ok: [cn1]
+ok: [cn2]
+
+TASK [Copy/sync the /etc/passwd with owner and permissions] *******************************************************
+ok: [mds]
+ok: [cn2]
+ok: [cn1]
+
+TASK [Copy/sync the /etc/group with owner and permissions] ********************************************************
+ok: [mds]
+ok: [cn1]
+ok: [cn2]
+
+TASK [Concatenate to the /etc/passwd if the info does not exist] **************************************************
+changed: [mds]
+changed: [cn1]
+changed: [cn2]
+
+TASK [Concatenate to the /etc/group if the info does not exist] ***************************************************
+changed: [mds]
+changed: [cn1]
+changed: [cn2]
+
+PLAY RECAP ********************************************************************************************************
+cn1                        : ok=5    changed=2    unreachable=0    failed=0    skipped=0    rescued=0    ignored=0   
+cn2                        : ok=5    changed=2    unreachable=0    failed=0    skipped=0    rescued=0    ignored=0   
+mds                        : ok=5    changed=2    unreachable=0    failed=0    skipped=0    rescued=0    ignored=0 
+```
+
 
 
 

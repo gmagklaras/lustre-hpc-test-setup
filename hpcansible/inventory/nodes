@@ -1,0 +1,12 @@
+[all:vars]
+ansible_user=root
+
+[compute]
+cn1 
+cn2
+
+[storage]
+mds
+oss1
+oss2
+

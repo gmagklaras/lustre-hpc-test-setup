@@ -127,7 +127,16 @@ cn2                        : ok=5    changed=2    unreachable=0    failed=0    s
 mds                        : ok=5    changed=2    unreachable=0    failed=0    skipped=0    rescued=0    ignored=0 
 ```
 
-
+and check for example that individual users exist across the nodes:
+```
+(hpcansible) [georgios@cn1 hpcansible]$ ansible -i inventory/ -m shell -a "cat /etc/passwd /etc/group | grep georgios" compute
+cn1 | CHANGED | rc=0 >>
+georgios:x:1000:1000::/home/georgios:/bin/bash
+georgios:x:1000:
+cn2 | CHANGED | rc=0 >>
+georgios:x:1000:1000::/home/georgios:/bin/bash
+georgios:x:1000:
+```
 
 
 

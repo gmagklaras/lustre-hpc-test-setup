@@ -1,4 +1,4 @@
-# lustre-test-setup
+# lustre-hpc-test-setup
 The purpose of this repository is to test and implement a small and simple Lustre filesystem setup, in order to:
 - become familiar with a verified Lustre Setup
 - play with features of Lustre (file striping) 

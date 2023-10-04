@@ -49,23 +49,17 @@ This procedure describes the installation of a RHEL8.8 based MDS server with Lus
      ```
      gives you output including an NID, as shown below:
      ```
-     net:
-    	 net type: lo
-          local NI(s):
-             nid: 0@lo
-              status: up
-    	 net type: tcp
-          local NI(s):
-             nid: 192.168.14.121@tcp
-              status: up
-              interfaces:
-              	  0: eno1
-      ```
-      If a node has more than one network interface, you'll typically want to dedicate a specific interface to Lustre. You can do this by including an entry in the */etc/modprobe.d/lustre.conf* file on the node that sets the LNet module networks parameter:
-      *options lnet networks=comma-separated list of networks*
-      This example specifies that a Lustre node will use a TCP/IP interface and an InfiniBand interface:
-      ```
-      options lnet networks=tcp0(eth0),o2ib(ib0)
-      ```
+     nid: 192.168.14.121@tcp
+     status: up
+     interfaces:
+     0: eno1
+     ```
+     Make note of that NID because you will use it in latter steps when you format the Lustre filesystem. 
+     If a node has more than one network interface, you'll typically want to dedicate a specific interface to Lustre. You can do this by including an entry in the */etc/modprobe.d/lustre.conf* file on the node that sets the LNet module networks parameter:
+     *options lnet networks=comma-separated list of networks*
+     This example specifies that a Lustre node will use a TCP/IP interface and an InfiniBand interface:
+     ```
+     options lnet networks=tcp0(eth0),o2ib(ib0)
+     ```
 
 

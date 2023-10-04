@@ -80,7 +80,29 @@ This procedure describes the installation of a RHEL8.8 based MDS server with Lus
 	target name   MGS
 	kilobytes     155648
 	options        -q -O uninit_bg,dir_nlink,quota,project,huge_file,^fast_commit,flex_bg -E lazy_journal_init="0",lazy_itable_init="0" -F mkfs_cmd = mke2fs -j -b 4096 -L MGS  -q -O uninit_bg,dir_nlink,quota,project,huge_file,^fast_commit,flex_bg -E lazy_journal_init="0",lazy_itable_init="0" -F /dev/vg00/LVMGSDIAS 155648k
-Writing CONFIGS/mountdata
+  Writing CONFIGS/mountdata
+  ```
+      Now the same for the metadata target MDT:
+  ```
+  lvcreate -L 95g -n LVMDTDIAS vg00
+  mkfs.lustre --fsname=DIAS --mdt --mgsnode=192.168.14.121 --index=0 /dev/vg00/LVMDTDIAS
+     Permanent disk data:
+  Target:     DIAS:MDT0000
+  Index:      0
+  Lustre FS:  DIAS
+  Mount type: ldiskfs
+  Flags:      0x61
+              (MDT first_time update )
+  Persistent mount opts: user_xattr,errors=remount-ro
+  Parameters: mgsnode=192.168.14.121@tcp
+
+  checking for existing Lustre data: not found
+  device size = 97280MB
+  formatting backing filesystem ldiskfs on /dev/vg00/LVMDTDIAS
+	target name   DIAS:MDT0000
+	kilobytes     99614720
+	options        -J size=3891 -I 1024 -i 2560 -q -O dirdata,uninit_bg,^extents,dir_nlink,quota,project,huge_file,ea_inode,large_dir,^fast_commit,flex_bg -E lazy_journal_init="0",lazy_itable_init="0" -F mkfs_cmd = mke2fs -j -b 4096 -L DIAS:MDT0000  -J size=3891 -I 1024 -i 2560 -q -O dirdata,uninit_bg,^extents,dir_nlink,quota,project,huge_file,ea_inode,large_dir,^fast_commit,flex_bg -E lazy_journal_init="0",lazy_itable_init="0" -F /dev/vg00/LVMDTDIAS 99614720k
+  Writing CONFIGS/mountdata                               
   ```
 
 

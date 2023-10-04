@@ -50,13 +50,13 @@ This procedure describes the installation of a RHEL8.8 based MDS server with Lus
      gives you output including an NID, as shown below:
      ```
      net:
-    	- net type: lo
+    	 net type: lo
           local NI(s):
-            - nid: 0@lo
+             nid: 0@lo
               status: up
-    	- net type: tcp
+    	 net type: tcp
           local NI(s):
-            - nid: 192.168.14.121@tcp
+             nid: 192.168.14.121@tcp
               status: up
               interfaces:
               	  0: eno1

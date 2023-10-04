@@ -144,7 +144,7 @@ This procedure describes the installation of a RHEL8.8 based MDS server with Lus
  Depending on the size and state (how busy is the fs) of the filesystem, it might take some time to see this propagated across all OSSs.
 
 
-At this point the configuration of the MDT.
+At this point the configuration of the MDT is complete!
 
  
 

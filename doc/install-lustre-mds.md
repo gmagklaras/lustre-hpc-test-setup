@@ -61,5 +61,13 @@ This procedure describes the installation of a RHEL8.8 based MDS server with Lus
               interfaces:
               	  0: eno1
       ```
+      If a node has more than one network interface, you'll typically want to dedicate a specific interface to Lustre. You can do this by including an entry in the */etc/modprobe.d/lustre.conf* file on the node that sets the LNet module networks parameter:
+      ```
+      options lnet networks=comma-separated list of networks
+      ```
+      This example specifies that a Lustre node will use a TCP/IP interface and an InfiniBand interface:
+      ```
+      options lnet networks=tcp0(eth0),o2ib(ib0)
+      ```
 
 

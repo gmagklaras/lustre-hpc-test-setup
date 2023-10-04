@@ -108,6 +108,46 @@ This procedure describes the installation of a RHEL8.8 based MDS server with Lus
   ```
   NOTE: IT IS IMPORTANT TO SPECIFY THE --mgsnode parameter with the IP. If you do not, you might not be able to register properly OSTs from OSS nodes. 
 
+  Now, we can mount the MGS and MDT filesystems (assuming the mount points /lustre/mgs and /lustre/mdt0 are made:
+  
+ ```
+ mount -t lustre /dev/vg00/LVMGSDIAS /lustre/mgs
+ mount -t lustre /dev/vg00/LVMDTDIAS /lustre/mdt0/
+ ```
+
+- 6) Finally, you can enable quotas:
+ ```
+ lctl set_param -P osd-*.DIAS*.quota_slave_dt.enabled=ugp
+ lctl set_param -P osd*.DIAS*.quota_slave_md.enabled=g
+ ```
+  
+  The first command turns user, group and project quotas for BLOCK only (slave_dt) on the MGS. The second turns on group quotas for INODES only (slave_md) on the MGS. It might take a few moments from the time you issue these commands, until you see them effective with the following command:
+ ```
+ lctl get_param osd-*.*.quota_slave_*.enabled
+ osd-ldiskfs.DIAS-MDT0000.quota_slave_dt.enabled=ugp
+ osd-ldiskfs.DIAS-MDT0000.quota_slave_md.enabled=g
+ ```
+
+ You can also check across all OSS and MDT/MFS servers with something like this:
+ ```
+ (hpcansible) [georgios@cn1 hpcansible]$ ansible -i inventory/ -m shell -a "lctl get_param osd-*.*.quota_slave_*.enabled" storage
+  mds | CHANGED | rc=0 >>
+  osd-ldiskfs.DIAS-MDT0000.quota_slave_dt.enabled=ugp
+  osd-ldiskfs.DIAS-MDT0000.quota_slave_md.enabled=g
+  oss1 | CHANGED | rc=0 >>
+  osd-ldiskfs.DIAS-OST0001.quota_slave_dt.enabled=ugp
+  osd-ldiskfs.DIAS-OST0002.quota_slave_dt.enabled=ugp
+  oss2 | CHANGED | rc=0 >>
+  osd-ldiskfs.DIAS-OST0003.quota_slave_dt.enabled=ugp
+ ```
+ 
+ Depending on the size and state (how busy is the fs) of the filesystem, it might take some time to see this propagated across all OSSs.
+
+
+At this point the configuration of the MDT.
+
+ 
+
 
 
    

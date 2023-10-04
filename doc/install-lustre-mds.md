@@ -13,5 +13,19 @@ This procedure describes the installation of a RHEL8.8 based MDS server with Lus
   ```
   dnf -y install http://192.168.122.33/lustre/2.15.3/el8.8/server/kmod-lustre-2.15.3-1.el8.x86_64.rpm http://192.168.122.33/lustre/2.15.3/el8.8/server/kmod-lustre-osd-ldiskfs-2.15.3-1.el8.x86_64.rpm http://192.168.122.33/lustre/2.15.3/el8.8/server/lustre-2.15.3-1.el8.x86_64.rpm http://192.168.122.33/lustre/2.15.3/el8.8/server/lustre-devel-2.15.3-1.el8.x86_64.rpm http://192.168.122.33/lustre/2.15.3/el8.8/server/lustre-osd-ldiskfs-mount-2.15.3-1.el8.x86_64.rpm http://192.168.122.33/lustre/2.15.3/el8.8/server/lustre-iokit-2.15.3-1.el8.x86_64.rpm 
   ```
+- 4) Activate the lnet module and configute LNet:
+  ```
+  modprobe lnet
+  ```
+  If you get errors that the ldiskfs-mount module is missing, see step ii above.
+  Configure LNet now:
+  ```
+  lnetctl lnet configure [--all]
+  lnetctl net add --net tcp --if eno1 --peer-timeout 180 --peer-credits 8
+  ```
+  The above commands create the tcp LNet network that is bound to the *eno1* NIC. This is the NIC that will carry the LNet traffic. Check the status of the above commands by issuing a:
+  ```
+  lnetctl global show
+  ```
 
 

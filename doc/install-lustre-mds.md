@@ -61,5 +61,30 @@ This procedure describes the installation of a RHEL8.8 based MDS server with Lus
      ```
      options lnet networks=tcp0(eth0),o2ib(ib0)
      ```
+- 5) Create the Lustre management service MGS filesystem. The MGS stores configuration information for one or more Lustre file systems in a cluster and provides this information to other Lustre hosts. Servers and clients connect to the MGS on startup in order to retrieve the configuration log for the file system. Notification of changes to a file system’s configuration, including server restarts, are distributed by the MGS. We will make separate mgs and mdt partitions. This is recommended for scalability. The name of our filesystem will be *DIAS*, the IP of the management node is *192.168.14.121* as shown by the NID obtain in step iv:
+  ```
+  lvcreate -L 152m -n LVMGSDIAS vg00
+  mkfs.lustre --fsname=DIAS --mgs -mgsnode=192.168.14.121 /dev/vg00/LVMGSDIAS
+   Permanent disk data:
+  Target:     MGS
+  Index:      unassigned
+  Lustre FS:  DIAS
+  Mount type: ldiskfs
+  Flags:      0x64
+              (MGS first_time update )
+  Persistent mount opts: user_xattr,errors=remount-ro
+  Parameters: mgsnode=192.168.14.121@tcp
+
+  device size = 152MB
+  formatting backing filesystem ldiskfs on /dev/vg00/LVMGSDIAS
+	target name   MGS
+	kilobytes     155648
+	options        -q -O uninit_bg,dir_nlink,quota,project,huge_file,^fast_commit,flex_bg -E lazy_journal_init="0",lazy_itable_init="0" -F mkfs_cmd = mke2fs -j -b 4096 -L MGS  -q -O uninit_bg,dir_nlink,quota,project,huge_file,^fast_commit,flex_bg -E lazy_journal_init="0",lazy_itable_init="0" -F /dev/vg00/LVMGSDIAS 155648k
+Writing CONFIGS/mountdata
+  ```
+
+
+   
+   
 
 

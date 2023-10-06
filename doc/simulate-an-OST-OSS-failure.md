@@ -24,6 +24,7 @@ filesystem_summary:	  248.0G       50.6G	  184.6G  22% /lustre/storeA
   Connection to 192.168.14.178 closed by remote host.
   Connection to 192.168.14.178 closed.
   ```
+
 - 2)Go back to one of the clients, you should have the lfs df -h command hanging at the point/order of the index of the OST (1):
   ```
   [root@cn2 ~]# lfs df -h
@@ -52,7 +53,8 @@ filesystem_summary:	  248.0G       50.6G	  184.6G  22% /lustre/storeA
   [87885.624991] Lustre: DIAS-OST0001-osc-ffff9d6153c91000: Connection to DIAS-OST0001 (at 192.168.14.178@tcp) was lost; in progress operations using this service will wait for recovery to complete
   [87904.056939] Lustre: 3389:0:(client.c:2295:ptlrpc_expire_one_request()) @@@ Request sent has timed out for slow reply: [sent 1696590759/real 1696590759]  req@0000000044314f25 x1778912219544448/t0(0) o400->DIAS-OST0002-osc-ffff9d6153c91000@192.168.14.178@tcp:28/4 lens 224/224 e 0 to 1 dl 1696590766 ref 1 fl Rpc:XNQr/0/ffffffff rc 0/-1 job:''
   [87904.056972] Lustre: DIAS-OST0002-osc-ffff9d6153c91000: Connection to DIAS-OST0002 (at 192.168.14.178@tcp) was lost; in progress operations using this service will wait for recovery to complete
- ```
+  ```
+
 - 3)Let's recover now. Power back on oss1 and right after the node boots up, ssh login and issue the following:
   ```
   watch 'cat /proc/fs/lustre/obdfilter/DIAS-OST0*/recovery_status  | grep status: '

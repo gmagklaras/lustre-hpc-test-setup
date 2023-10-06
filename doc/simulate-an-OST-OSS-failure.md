@@ -67,27 +67,30 @@ filesystem_summary:	  248.0G       50.6G	  184.6G  22% /lustre/storeA
   ```
   From the moment the status is complete, you should have whatever I/O operations were hanging on the clients completing/returning. You should also consult the journal of the MDS, affected OSS and clients to verify that all is good. 
   At the MDS:
- ```
- [root@mds1 ~]# dmesg -T | grep Lustre
- ...
- [Fri Oct  6 11:33:01 2023] Lustre: DIAS-OST0002-osc-MDT0000: Connection restored to 192.168.14.178@tcp (at 192.168.14.178@tcp)
- ...
- ```
- At the affected OSS (oss1):
- ```
- [root@oss1 ~]# dmesg -T | grep Lustre
- [Fri Oct  6 11:32:02 2023] Lustre: Lustre: Build Version: 2.15.3
- [Fri Oct  6 11:32:04 2023] Lustre: DIAS-OST0002: Imperative Recovery enabled, recovery window shrunk from 300-900 down to 150-900
- [Fri Oct  6 11:32:08 2023] Lustre: DIAS-OST0002: Will be in recovery for at least 2:30, or until 2 clients reconnect
- [Fri Oct  6 11:33:01 2023] Lustre: DIAS-OST0002: Recovery over after 0:53, of 2 clients 2 recovered and 0 were evicted.
- [Fri Oct  6 11:33:01 2023] Lustre: DIAS-OST0001: deleting orphan objects from 0x0:23205 to 0x0:23265
- [Fri Oct  6 11:33:01 2023] Lustre: DIAS-OST0002: deleting orphan objects from 0x0:23205 to 0x0:23265
- ```
- And finally on the Lustre clients that were accessing the filesystem during the outage, every I/O operation should return now: 
- ```
- [root@cn2 copiediotars]# file iotest1.tar 
- iotest1.tar: POSIX tar archive (GNU)
- ```
+  ```
+  [root@mds1 ~]# dmesg -T | grep Lustre
+  ...
+  [Fri Oct  6 11:33:01 2023] Lustre: DIAS-OST0002-osc-MDT0000: Connection restored to 192.168.14.178@tcp (at 192.168.14.178@tcp)
+   ...
+  ```
+
+  At the affected OSS (oss1):
+
+  ```
+  [root@oss1 ~]# dmesg -T | grep Lustre
+  [Fri Oct  6 11:32:02 2023] Lustre: Lustre: Build Version: 2.15.3
+  [Fri Oct  6 11:32:04 2023] Lustre: DIAS-OST0002: Imperative Recovery enabled, recovery window shrunk from 300-900 down to 150-900
+  [Fri Oct  6 11:32:08 2023] Lustre: DIAS-OST0002: Will be in recovery for at least 2:30, or until 2 clients reconnect
+  [Fri Oct  6 11:33:01 2023] Lustre: DIAS-OST0002: Recovery over after 0:53, of 2 clients 2 recovered and 0 were evicted.
+  [Fri Oct  6 11:33:01 2023] Lustre: DIAS-OST0001: deleting orphan objects from 0x0:23205 to 0x0:23265
+  [Fri Oct  6 11:33:01 2023] Lustre: DIAS-OST0002: deleting orphan objects from 0x0:23205 to 0x0:23265
+  ```
+ 
+  And finally on the Lustre clients that were accessing the filesystem during the outage, every I/O operation should return now: 
+  ```
+  [root@cn2 copiediotars]# file iotest1.tar 
+  iotest1.tar: POSIX tar archive (GNU)
+  ```
  
 At that point, steps i to iii above demonstrated a very basic recovery, in which an OSS node goes offline (power or other outage), causes a filesystem hang on the clients. We showed how to locate the OSS where the OST lies,  power it up/bring it online, run successfully the recovery. This, however is the good scenario. In real life production conditions, things might be more complex.
 

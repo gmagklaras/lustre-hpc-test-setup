@@ -96,7 +96,74 @@ filesystem_summary:	  248.0G       50.6G	  184.6G  22% /lustre/storeA
   iotest1.tar: POSIX tar archive (GNU)
   ```
  
-At that point, steps i to iii above demonstrated a very basic recovery, in which an OSS node goes offline (power or other outage), causes a filesystem hang on the clients. We showed how to locate the OSS where the OST lies,  power it up/bring it online, run successfully the recovery. This, however is the good scenario. In real life production conditions, things might be more complex.
+At that point, steps 1 to 3 above demonstrated a very basic recovery, in which an OSS node goes offline (power or OSS server crash outage), causes a filesystem hang on the clients. We showed how to locate the OSS where the OST lies,  power it up/bring it online, run successfully the recovery. This, however is the good scenario. In real life production conditions, things might be more complex.
+
+During the recovery we demonstrated in step 3 above, the OSTs come back onlin and the Lustre file system starts a recovery process to enable clients to reconnect to the OSTs. Lustre servers put a limit on the time they will wait in recovery for clients to reconnect.
+
+During recovery, clients reconnect and replay their requests serially, in the same order they were done originally. Until a client receives a confirmation that a given transaction has been written to stable storage, the client holds on to the transaction, in case it needs to be replayed. Periodically, a progress message prints to the log, stating how_many/expected clients have reconnected. If the recovery is aborted, this log shows how many clients managed to reconnect. When all clients have completed recovery, or if the recovery timeout is reached, the recovery period ends and the OST resumes normal request processing.
+
+If some clients fail to replay their requests during the recovery period, this will not stop the recovery from completing. You may have a situation where the OST recovers, but some clients are not able to participate in recovery (e.g. network problems or client failure), so they are *evicted* and their requests are not replayed. This would result in any operations on the evicted clients failing, including in-progress writes, which would cause cached writes to be lost. This is a normal outcome; the recovery cannot wait indefinitely, or the file system would be hung any time a client failed. The lost transactions are an unfortunate result of the recovery process.
+
+There will be cases where the above recovery process could fail due to storage hardware or other more complex issues causing corruption in the Lustre filesystem. In these cases, e2fsck must be run on the to ensure local OST filesystem consistency. It might also be necessary to  use LFSCK to run a distributed check on the file system to resolve any inconsistencies between the MDTs and OSTs, or among MDTs.
+
+In contrast to the previous recovery process that recovers an OST, an e2fsck operation onan OST must be run with the filesystem stopped. This is what we simulate next. So, in preparation of the e2fsck command:
+
+- 4) Stop all related Lustre I/O activity and umount the filesystem from all clients:
+  ```
+  (hpcansible) [georgios@cn1 hpcansible]$ ansible -i inventory/ -m shell -a "umount /lustre/storeA" compute
+  cn2 | CHANGED | rc=0 >>
+
+  cn1 | CHANGED | rc=0 >>
+  ```
+
+- 5) Unmount from all OSSes the OSTs:
+  ```
+  (hpcansible) [georgios@cn1 hpcansible]$ ansible -i inventory/ -m shell -a "umount /lustre/ost/*" oss1 oss2
+  ```
+
+- 6) Unmount the MDT and MGS targets at the MDS:
+  ```
+  [root@mds1 ~]# umount /lustre/mdt0 
+  [root@mds1 ~]# umount /lustre/mgs 
+  ```
+
+At that point, the Lustre filesystem is clearly unmounted. So, we can proceed with the e2fsck process now:
+
+- 7) Go to the OSS server (oss1) and do the following:
+   - Inspect first the output on OST2: with -fn (do not fix) 
+     ```
+     [root@oss1 ~]# e2fsck -fn /dev/vg01/LVDIASOST2
+     e2fsck 1.47.0-wc4 (22-Jun-2023)
+     Pass 1: Checking inodes, blocks, and sizes
+     Pass 2: Checking directory structure
+     Pass 3: Checking directory connectivity
+     Pass 4: Checking reference counts
+     Pass 5: Checking group summary information
+     DIAS-OST0002: 304/1388160 files (1.3% non-contiguous), 7078064/23592960 blocks
+     ```
+    
+    - If you are sure that this is what you want running it with -fy (fix):
+      ```
+      [root@oss1 ~]# e2fsck -fy /dev/vg01/LVDIASOST2
+      e2fsck 1.47.0-wc4 (22-Jun-2023)
+      Pass 1: Checking inodes, blocks, and sizes
+      Pass 2: Checking directory structure
+      Pass 3: Checking directory connectivity
+      Pass 4: Checking reference counts
+      Pass 5: Checking group summary information
+      DIAS-OST0002: 304/1388160 files (1.3% non-contiguous), 7078064/23592960 blocks
+      ```
+
+- 8) At that point if all things pass and fixed, you can bring back the filesystem.
+
+
+ 
+ 
+ 
+
+
+
+
 
 
 

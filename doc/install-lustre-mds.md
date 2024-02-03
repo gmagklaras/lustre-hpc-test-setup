@@ -7,6 +7,7 @@ This procedure describes the installation of a RHEL8.9 based MDS server with Lus
     ``` 
 [root@mds1 ~]# uname -a
 Linux mds1 4.18.0-513.9.1.el8_lustre.x86_64 #1 SMP Sat Dec 23 05:23:32 UTC 2023 x86_64 x86_64 x86_64 GNU/Linux
+    
     ```
      In essence, this makes sure that the *grub2-set-default* command of the [kickstart file](hpcansible/files/kickstarts/mdstoberhel89.ks) has worked). If not you could be getting errors like the ldiskfs-mount module is missing when you attempt the next step iv.
 - 3) Once you have booted in the patched Lustre kernel, install the Lustre server RPM packages:

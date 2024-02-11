@@ -65,7 +65,7 @@ Linux mds1 4.18.0-513.9.1.el8_lustre.x86_64 #1 SMP Sat Dec 23 05:23:32 UTC 2023 
 - 5) Create the Lustre management service MGS filesystem. The MGS stores configuration information for one or more Lustre file systems in a cluster and provides this information to other Lustre hosts. Servers and clients connect to the MGS on startup in order to retrieve the configuration log for the file system. Notification of changes to a file system’s configuration, including server restarts, are distributed by the MGS. We will make separate mgs and mdt partitions. This is recommended for scalability. The name of our filesystem will be *DIAS*, the IP of the management node is *192.168.14.121* as shown by the NID obtain in step iv:
   ```
   lvcreate -L 152m -n LVMGSDIAS vg00
-  mkfs.lustre --fsname=DIAS --mgs -mgsnode=192.168.14.121 /dev/vg00/LVMGSDIAS
+  mkfs.lustre --fsname=DIAS --mgs --mgsnode=192.168.14.121 /dev/vg00/LVMGSDIAS
    Permanent disk data:
   Target:     MGS
   Index:      unassigned

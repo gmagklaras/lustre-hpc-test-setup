@@ -3,8 +3,8 @@ The purpose of this repository is to test and implement a small and simple Lustr
 - become familiar with a verified Lustre Setup
 - play with features of Lustre (file striping) 
 - test procedures such as the following:
-  - [Install an MDS server] (doc/install-lustre-mds.md)
-  - [Install OSS servers] (doc/install-lustre-oss.md)
+  - [Install an MDS server](doc/install-lustre-mds.md)
+  - [Install OSS servers](doc/install-lustre-oss.md)
   - Install Lustre clients and mount the test Lustre filesystem 
   - OST outage and recovery
   - OSS outage and recorery

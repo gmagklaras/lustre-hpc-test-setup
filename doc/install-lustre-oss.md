@@ -69,7 +69,16 @@ Linux mds1 4.18.0-513.9.1.el8_lustre.x86_64 #1 SMP Sat Dec 23 05:23:32 UTC 2023 
     ```
     lctl ping 192.168.14.121@tcp
     ```
-   
+   If the response is like the one above:
+    ```
+    12345-0@lo
+    12345-192.168.14.121@tcp
+    ```
+   this means that the LNET communication between the OSS and the MDS server is good. However, if the lctl ping fails as shown below: 
+   ```
+   failed to ping 192.168.14.121@tcp: Input/output error
+   ```
+   you will have to rectify and see what the networking problem is first prior continuing with the rest of the procedure steps.
 
 - 5) Create the Lustre management service MGS filesystem. The MGS stores configuration information for one or more Lustre file systems in a cluster and provides this information to other Lustre hosts. Servers and clients connect to the MGS on startup in order to retrieve the configuration log for the file system. Notification of changes to a file system’s configuration, including server restarts, are distributed by the MGS. We will make separate mgs and mdt partitions. This is recommended for scalability. The name of our filesystem will be *DIAS*, the IP of the management node is *192.168.14.121* as shown by the NID obtain in step iv:
   ```

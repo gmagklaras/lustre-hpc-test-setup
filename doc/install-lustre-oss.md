@@ -93,9 +93,6 @@ Linux mds1 4.18.0-513.9.1.el8_lustre.x86_64 #1 SMP Sat Dec 23 05:23:32 UTC 2023 
   /dev/sda1  *         2048   1050623   1048576  512M 83 Linux
   /dev/sda2         1050624 389023743 387973120  185G 8e Linux LVM
   /dev/sda3       389023744 467664895  78641152 37.5G 8e Linux LVM
- ```
- So, we create an LVM based LV:
- ```
  [root@oss1 ~]#  pvcreate pvoss1 /dev/sda2
   No device found for vgoss1.
   Physical volume "/dev/sda2" successfully created.
@@ -103,8 +100,6 @@ Linux mds1 4.18.0-513.9.1.el8_lustre.x86_64 #1 SMP Sat Dec 23 05:23:32 UTC 2023 
   Volume group "vgoss1" successfully created
  [root@oss1 ~]# lvcreate -L 184g --name LVDIASOST1 vgoss1
   Logical volume "LVDIASOST1" created.
- ```
-  We are ready now to make the OST filesystem:
  ```
  [root@oss1 ~]# mkfs.lustre --fsname=DIAS --mgsnode=192.168.14.121@tcp --ost --index=1 /dev/vgoss1/LVDIASOST1
 

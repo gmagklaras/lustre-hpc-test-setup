@@ -95,6 +95,7 @@ Linux mds1 4.18.0-513.9.1.el8_lustre.x86_64 #1 SMP Sat Dec 23 05:23:32 UTC 2023 
   /dev/sda3       389023744 467664895  78641152 37.5G 8e Linux LVM
  ```
   So, we create an LVM based LV:
+
  ```
  [root@oss1 ~]#  pvcreate pvoss1 /dev/sda2
   No device found for vgoss1.
@@ -105,28 +106,28 @@ Linux mds1 4.18.0-513.9.1.el8_lustre.x86_64 #1 SMP Sat Dec 23 05:23:32 UTC 2023 
   Logical volume "LVDIASOST1" created.
  ```
   We are ready now to make the OST filesystem:
-  ```
-  [root@oss1 ~]# mkfs.lustre --fsname=DIAS --mgsnode=192.168.14.121@tcp --ost --index=1 /dev/vgoss1/LVDIASOST1
+ ```
+ [root@oss1 ~]# mkfs.lustre --fsname=DIAS --mgsnode=192.168.14.121@tcp --ost --index=1 /dev/vgoss1/LVDIASOST1
 
    Permanent disk data:
-Target:     DIAS:OST0001
-Index:      1
-Lustre FS:  DIAS
-Mount type: ldiskfs
-Flags:      0x62
+ Target:     DIAS:OST0001
+ Index:      1
+ Lustre FS:  DIAS
+ Mount type: ldiskfs
+ Flags:      0x62
               (OST first_time update )
-Persistent mount opts: ,errors=remount-ro
-Parameters: mgsnode=192.168.14.121@tcp
+ Persistent mount opts: ,errors=remount-ro
+ Parameters: mgsnode=192.168.14.121@tcp
 
-checking for existing Lustre data: not found
-device size = 188416MB
-formatting backing filesystem ldiskfs on /dev/vgoss1/LVDIASOST1
+ checking for existing Lustre data: not found
+ device size = 188416MB
+ formatting backing filesystem ldiskfs on /dev/vgoss1/LVDIASOST1
 	target name   DIAS:OST0001
 	kilobytes     192937984
 	options        -J size=1024 -I 512 -i 69905 -q -O extents,uninit_bg,dir_nlink,quota,project,huge_file,^fast_commit,flex_bg -G 256 -E resize="4290772992",lazy_journal_init="0",lazy_itable_init="0" -F
-mkfs_cmd = mke2fs -j -b 4096 -L DIAS:OST0001  -J size=1024 -I 512 -i 69905 -q -O extents,uninit_bg,dir_nlink,quota,project,huge_file,^fast_commit,flex_bg -G 256 -E resize="4290772992",lazy_journal_init="0",lazy_itable_init="0" -F /dev/vgoss1/LVDIASOST1 192937984k
-Writing CONFIGS/mountdata
-  ```
+ mkfs_cmd = mke2fs -j -b 4096 -L DIAS:OST0001  -J size=1024 -I 512 -i 69905 -q -O extents,uninit_bg,dir_nlink,quota,project,huge_file,^fast_commit,flex_bg -G 256 -E resize="4290772992",lazy_journal_init="0",lazy_itable_init="0" -F /dev/vgoss1/LVDIASOST1 192937984k
+ Writing CONFIGS/mountdata
+ ```
 
   NOTE: IT IS IMPORTANT TO SPECIFY THE --mgsnode parameter with the IP of the MDS server. 
 

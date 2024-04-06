@@ -122,7 +122,23 @@ Linux mds1 4.18.0-513.9.1.el8_lustre.x86_64 #1 SMP Sat Dec 23 05:23:32 UTC 2023 
   Writing CONFIGS/mountdata
   ```
 
-  NOTE: IT IS IMPORTANT TO SPECIFY THE --mgsnode parameter with the IP of the MDS server. 
+  NOTE: IT IS IMPORTANT TO SPECIFY THE --mgsnode parameter with the IP of the MDS server as well as the same --fsname as the ones on the MDS server in the mkfs.lustre command on the OSS server. Also important is the index number when we join more OSTs (from the same or other servers). Index numbers should not be duplicated amongst different filesystems as this will cause problems when the OSTs will be added to the filesystem! The first index numbers are always the MDTs and then the OSTs follow in index sequence. 
+
+- 6) The next command is to try and mount the filesystem we have constructed. When we mount the constructed OST of the previous step, this will join the live filesystem, so again, make sure you have the index number right:
+ ```
+ mount -t lustre /dev/vgoss1/LVDIASOST1 /lustre/ost/OST0001/
+ ```
+
+and if there are no errors from the mount process on the OSS server, we should check on a client with the lfs df -h command:
+
+ ```
+ [root@cn1 storeA]# lfs df -h
+ UUID                       bytes        Used   Available Use% Mounted on
+ DIAS-MDT0000_UUID          52.7G        5.3M       48.0G   1% /lustre/storeA[MDT:0]
+ DIAS-OST0001_UUID         180.2G        1.2M      170.9G   1% /lustre/storeA[OST:1]
+
+ filesystem_summary:       180.2G        1.2M      170.9G   1% /lustre/storeA
+ ``
 
 At this point the configuration of the OSS server config is complete!
 

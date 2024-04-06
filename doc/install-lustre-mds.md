@@ -2,7 +2,7 @@
 
 This procedure describes the installation of a RHEL8.9 based MDS server with Lustre 2.15.4. 
 
-- 1) OS install via your favourite PXE solution the MDS server using the [mdstoberhel89.ks](hpcansible/files/kickstarts/mdstoberhel89.ks) kickstart file.  
+- 1) OS install via your favourite PXE solution the MDS server using the [mdstoberhel89.ks](../hpcansible/files/kickstarts/mdstoberhel89.ks) kickstart file.  
 - 2) Make sure that postinstall the system is booted in the patched Lustre 2.15.4 kernel, which should be: 
     ``` 
 [root@mds1 ~]# uname -a

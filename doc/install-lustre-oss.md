@@ -80,52 +80,57 @@ Linux mds1 4.18.0-513.9.1.el8_lustre.x86_64 #1 SMP Sat Dec 23 05:23:32 UTC 2023 
    ```
    you will have to rectify and see what the networking problem is first prior continuing with the rest of the procedure steps.
 
-- 5) Create the Lustre management service MGS filesystem. The MGS stores configuration information for one or more Lustre file systems in a cluster and provides this information to other Lustre hosts. Servers and clients connect to the MGS on startup in order to retrieve the configuration log for the file system. Notification of changes to a file system’s configuration, including server restarts, are distributed by the MGS. We will make separate mgs and mdt partitions. This is recommended for scalability. The name of our filesystem will be *DIAS*, the IP of the management node is *192.168.14.121* as shown by the NID obtain in step iv:
+- 5) Create the Lustre OST filesystem(s): Files in Lustre are composed of one or more OST objects, in addition to the metadata inode stored on the MDS. For every available block device (RAID disk group, partition) we need to make a volume construct. In our case, our OSS server has a RAID partition of approx 185 Gigabytes:
+
   ```
-  lvcreate -L 152m -n LVMGSDIAS vg00
-  mkfs.lustre --fsname=DIAS --mgs --mgsnode=192.168.14.121 /dev/vg00/LVMGSDIAS
+  Disk /dev/sda: 223 GiB, 239444426752 bytes, 467664896 sectors
+Units: sectors of 1 * 512 = 512 bytes
+Sector size (logical/physical): 512 bytes / 512 bytes
+I/O size (minimum/optimal): 512 bytes / 512 bytes
+Disklabel type: dos
+Disk identifier: 0x80586e4e
+
+Device     Boot     Start       End   Sectors  Size Id Type
+/dev/sda1  *         2048   1050623   1048576  512M 83 Linux
+/dev/sda2         1050624 389023743 387973120  185G 8e Linux LVM
+/dev/sda3       389023744 467664895  78641152 37.5G 8e Linux LVM
+ ```
+  So, we create an LVM based LV:
+ ```
+[root@oss1 ~]#  pvcreate pvoss1 /dev/sda2
+  No device found for vgoss1.
+  Physical volume "/dev/sda2" successfully created.
+[root@oss1 ~]# vgcreate vgoss1 /dev/sda2
+  Volume group "vgoss1" successfully created
+[root@oss1 ~]# lvcreate -L 184g --name LVDIASOST1 vgoss1
+  Logical volume "LVDIASOST1" created.
+```
+
+  We are ready now to make the OST filesystem:
+  ```
+  [root@oss1 ~]# mkfs.lustre --fsname=DIAS --mgsnode=192.168.14.121@tcp --ost --index=1 /dev/vgoss1/LVDIASOST1
+
    Permanent disk data:
-  Target:     MGS
-  Index:      unassigned
-  Lustre FS:  DIAS
-  Mount type: ldiskfs
-  Flags:      0x64
-              (MGS first_time update )
-  Persistent mount opts: user_xattr,errors=remount-ro
-  Parameters: mgsnode=192.168.14.121@tcp
+Target:     DIAS:OST0001
+Index:      1
+Lustre FS:  DIAS
+Mount type: ldiskfs
+Flags:      0x62
+              (OST first_time update )
+Persistent mount opts: ,errors=remount-ro
+Parameters: mgsnode=192.168.14.121@tcp
 
-  device size = 152MB
-  formatting backing filesystem ldiskfs on /dev/vg00/LVMGSDIAS
-	target name   MGS
-	kilobytes     155648
-	options        -q -O uninit_bg,dir_nlink,quota,project,huge_file,^fast_commit,flex_bg -E lazy_journal_init="0",lazy_itable_init="0" -F mkfs_cmd = mke2fs -j -b 4096 -L MGS  -q -O uninit_bg,dir_nlink,quota,project,huge_file,^fast_commit,flex_bg -E lazy_journal_init="0",lazy_itable_init="0" -F /dev/vg00/LVMGSDIAS 155648k
-  Writing CONFIGS/mountdata
+checking for existing Lustre data: not found
+device size = 188416MB
+formatting backing filesystem ldiskfs on /dev/vgoss1/LVDIASOST1
+	target name   DIAS:OST0001
+	kilobytes     192937984
+	options        -J size=1024 -I 512 -i 69905 -q -O extents,uninit_bg,dir_nlink,quota,project,huge_file,^fast_commit,flex_bg -G 256 -E resize="4290772992",lazy_journal_init="0",lazy_itable_init="0" -F
+mkfs_cmd = mke2fs -j -b 4096 -L DIAS:OST0001  -J size=1024 -I 512 -i 69905 -q -O extents,uninit_bg,dir_nlink,quota,project,huge_file,^fast_commit,flex_bg -G 256 -E resize="4290772992",lazy_journal_init="0",lazy_itable_init="0" -F /dev/vgoss1/LVDIASOST1 192937984k
+Writing CONFIGS/mountdata
   ```
-     
-     Now the same for the metadata target MDT:
 
-  ```
-  lvcreate -L 95g -n LVMDTDIAS vg00
-  mkfs.lustre --fsname=DIAS --mdt --mgsnode=192.168.14.121 --index=0 /dev/vg00/LVMDTDIAS
-     Permanent disk data:
-  Target:     DIAS:MDT0000
-  Index:      0
-  Lustre FS:  DIAS
-  Mount type: ldiskfs
-  Flags:      0x61
-              (MDT first_time update )
-  Persistent mount opts: user_xattr,errors=remount-ro
-  Parameters: mgsnode=192.168.14.121@tcp
-
-  checking for existing Lustre data: not found
-  device size = 97280MB
-  formatting backing filesystem ldiskfs on /dev/vg00/LVMDTDIAS
-	target name   DIAS:MDT0000
-	kilobytes     99614720
-	options        -J size=3891 -I 1024 -i 2560 -q -O dirdata,uninit_bg,^extents,dir_nlink,quota,project,huge_file,ea_inode,large_dir,^fast_commit,flex_bg -E lazy_journal_init="0",lazy_itable_init="0" -F mkfs_cmd = mke2fs -j -b 4096 -L DIAS:MDT0000  -J size=3891 -I 1024 -i 2560 -q -O dirdata,uninit_bg,^extents,dir_nlink,quota,project,huge_file,ea_inode,large_dir,^fast_commit,flex_bg -E lazy_journal_init="0",lazy_itable_init="0" -F /dev/vg00/LVMDTDIAS 99614720k
-  Writing CONFIGS/mountdata                               
-  ```
-  NOTE: IT IS IMPORTANT TO SPECIFY THE --mgsnode parameter with the IP. If you do not, you might not be able to register properly OSTs from OSS nodes. 
+  NOTE: IT IS IMPORTANT TO SPECIFY THE --mgsnode parameter with the IP of the MDS server. 
 
   Now, we can mount the MGS and MDT filesystems (assuming the mount points /lustre/mgs and /lustre/mdt0 are made:
   

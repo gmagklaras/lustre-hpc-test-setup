@@ -12,7 +12,7 @@ The purpose of this repository is to test and implement a small and simple Lustr
   - removal of OSTs
   - how to interface Lustre filesystems via NFS/CIFS gateways
 
-Small and simple means that we do not implement (yet) failover, interconnect. So, this test setup will implement the following:
+Small and simple means that we do not implement (yet) MDS/OSS failover OR interconnect. So, this test setup will implement the following:
 - 1 x MDS server based on [RHEL 8.9](https://access.redhat.com/documentation/en-us/red_hat_enterprise_linux/8/html/8.9_release_notes/index) and [Lustre 2.15.4](https://www.lustre.org/lustre-2-15-4-released/) 
 - 2 x OSS servers based on [RHEL 8.9](https://access.redhat.com/documentation/en-us/red_hat_enterprise_linux/8/html/8.9_release_notes/index) and [Lustre 2.15.4](https://www.lustre.org/lustre-2-15-4-released/)
 - Two Lustre clients based on [RHEL 8.8](https://access.redhat.com/documentation/en-us/red_hat_enterprise_linux/8/html/8.8_release_notes/index) and [Lustre 2.15.3](https://www.lustre.org/lustre-2-15-3-released/)

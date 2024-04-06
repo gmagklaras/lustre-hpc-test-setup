@@ -6,8 +6,7 @@ The purpose of this repository is to test and implement a small and simple Lustr
   - [Install an MDS server](doc/install-lustre-mds.md)
   - [Install OSS servers](doc/install-lustre-oss.md)
   - Install Lustre clients and mount the test Lustre filesystem 
-  - OST outage and recovery
-  - OSS outage and recorery
+  - [OSS outage and recorery](doc/simulate-an-OST-OSS-failure.md)
   - file migration from one OST to another
   - addition of OSTs
   - removal of OSTs

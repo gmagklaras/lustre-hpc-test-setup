@@ -100,7 +100,6 @@ Linux mds1 4.18.0-513.9.1.el8_lustre.x86_64 #1 SMP Sat Dec 23 05:23:32 UTC 2023 
   Volume group "vgoss1" successfully created
  [root@oss1 ~]# lvcreate -L 184g --name LVDIASOST1 vgoss1
   Logical volume "LVDIASOST1" created.
- ```
  [root@oss1 ~]# mkfs.lustre --fsname=DIAS --mgsnode=192.168.14.121@tcp --ost --index=1 /dev/vgoss1/LVDIASOST1
 
    Permanent disk data:
@@ -125,49 +124,5 @@ Linux mds1 4.18.0-513.9.1.el8_lustre.x86_64 #1 SMP Sat Dec 23 05:23:32 UTC 2023 
 
   NOTE: IT IS IMPORTANT TO SPECIFY THE --mgsnode parameter with the IP of the MDS server. 
 
-  Now, we can mount the MGS and MDT filesystems (assuming the mount points /lustre/mgs and /lustre/mdt0 are made:
-  
- ```
- mount -t lustre /dev/vg00/LVMGSDIAS /lustre/mgs
- mount -t lustre /dev/vg00/LVMDTDIAS /lustre/mdt0/
- ```
-
-- 6) Finally, you can enable quotas:
- ```
- lctl set_param -P osd-*.DIAS*.quota_slave_dt.enabled=ugp
- lctl set_param -P osd*.DIAS*.quota_slave_md.enabled=g
- ```
-  
-  The first command turns user, group and project quotas for BLOCK only (slave_dt) on the MGS. The second turns on group quotas for INODES only (slave_md) on the MGS. It might take a few moments from the time you issue these commands, until you see them effective with the following command:
- ```
- lctl get_param osd-*.*.quota_slave_*.enabled
- osd-ldiskfs.DIAS-MDT0000.quota_slave_dt.enabled=ugp
- osd-ldiskfs.DIAS-MDT0000.quota_slave_md.enabled=g
- ```
-
- You can also check across all OSS and MDT/MFS servers with something like this:
- ```
- (hpcansible) [georgios@cn1 hpcansible]$ ansible -i inventory/ -m shell -a "lctl get_param osd-*.*.quota_slave_*.enabled" storage
-  mds | CHANGED | rc=0 >>
-  osd-ldiskfs.DIAS-MDT0000.quota_slave_dt.enabled=ugp
-  osd-ldiskfs.DIAS-MDT0000.quota_slave_md.enabled=g
-  oss1 | CHANGED | rc=0 >>
-  osd-ldiskfs.DIAS-OST0001.quota_slave_dt.enabled=ugp
-  osd-ldiskfs.DIAS-OST0002.quota_slave_dt.enabled=ugp
-  oss2 | CHANGED | rc=0 >>
-  osd-ldiskfs.DIAS-OST0003.quota_slave_dt.enabled=ugp
- ```
- 
- Depending on the size and state (how busy is the fs) of the filesystem, it might take some time to see this propagated across all OSSs.
-
-
-At this point the configuration of the MDT is complete!
-
- 
-
-
-
-   
-   
-
+At this point the configuration of the OSS server config is complete!
 

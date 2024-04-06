@@ -94,8 +94,7 @@ Linux mds1 4.18.0-513.9.1.el8_lustre.x86_64 #1 SMP Sat Dec 23 05:23:32 UTC 2023 
   /dev/sda2         1050624 389023743 387973120  185G 8e Linux LVM
   /dev/sda3       389023744 467664895  78641152 37.5G 8e Linux LVM
  ```
-  So, we create an LVM based LV:
-
+ So, we create an LVM based LV:
  ```
  [root@oss1 ~]#  pvcreate pvoss1 /dev/sda2
   No device found for vgoss1.

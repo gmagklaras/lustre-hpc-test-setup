@@ -1,5 +1,5 @@
 # Georgios Magklaras - Steelcyber.com Lustre OSS server -- RHEL8.9 version with lustre 2.15.4
-# Assumes a Dell PowerEdge R220 with at least 300 Gigs of disk storage in RAID1 Hardware 
+# Assumes a Dell PowerEdge R220 with at least 240 Gigs of disk storage in RAID1 Hardware 
 # also registers the system with Redhat using the PPI key
 # Pre script, will evaluate which is the smallest drive and use it as OS drive.
 # The drive has to be less than 1 TB long, but larger than 100Gb.

@@ -55,13 +55,22 @@ Linux mds1 4.18.0-513.9.1.el8_lustre.x86_64 #1 SMP Sat Dec 23 05:23:32 UTC 2023 
      interfaces:
      0: eno1
      ```
-     At that point, provided that your MDS server is up and set completely as described in the [MDS setup procedures](install-lustre-mds.md) of this repo, it would be good to try and check that you can ping the NID of the MDS server via LNET.  
      If a node has more than one network interface, you'll typically want to dedicate a specific interface to Lustre. You can do this by including an entry in the */etc/modprobe.d/lustre.conf* file on the node that sets the LNet module networks parameter:
      *options lnet networks=comma-separated list of networks*
      This example specifies that a Lustre node will use a TCP/IP interface and an InfiniBand interface:
      ```
      options lnet networks=tcp0(eth0),o2ib(ib0)
      ```
+    At that point, provided that your MDS server is up and set completely as described in the [MDS setup procedures](install-lustre-mds.md) of this repo, it would be good to try and check that you can ping the NID of the MDS server via LNET. Issue an:
+    ```
+    lnetctl net show
+    ```
+   at your MDS server and obtain its NID. If for instance its NID is 192.168.14.121@tcp, then move back to your OSS server and issue a:
+    ```
+    lctl ping 192.168.14.121@tcp
+    ```
+   
+
 - 5) Create the Lustre management service MGS filesystem. The MGS stores configuration information for one or more Lustre file systems in a cluster and provides this information to other Lustre hosts. Servers and clients connect to the MGS on startup in order to retrieve the configuration log for the file system. Notification of changes to a file system’s configuration, including server restarts, are distributed by the MGS. We will make separate mgs and mdt partitions. This is recommended for scalability. The name of our filesystem will be *DIAS*, the IP of the management node is *192.168.14.121* as shown by the NID obtain in step iv:
   ```
   lvcreate -L 152m -n LVMGSDIAS vg00
